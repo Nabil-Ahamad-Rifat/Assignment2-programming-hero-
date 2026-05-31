@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
 import { signup, login } from "./auth.service";
 import { sendSuccess } from "../../utils/response";
+import { AppError } from "../../utils/AppError";
 import type { SignupBody, LoginBody } from "./auth.types";
 
 export const signupController = async (
@@ -10,6 +11,10 @@ export const signupController = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    if (!req.body || Object.keys(req.body).length === 0) {
+      next(new AppError("Request body cannot be empty", StatusCodes.BAD_REQUEST));
+      return;
+    }
     const user = await signup(req.body);
     sendSuccess(res, StatusCodes.CREATED, "User registered successfully", user);
   } catch (error) {
@@ -23,6 +28,10 @@ export const loginController = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    if (!req.body || Object.keys(req.body).length === 0) {
+      next(new AppError("Request body cannot be empty", StatusCodes.BAD_REQUEST));
+      return;
+    }
     const data = await login(req.body);
     sendSuccess(res, StatusCodes.OK, "Login successful", data);
   } catch (error) {

@@ -10,6 +10,10 @@ const SALT_ROUNDS = 10;
 const VALID_ROLES = ["contributor", "maintainer"] as const;
 
 export const signup = async (body: SignupBody): Promise<UserPublic> => {
+  if (!body) {
+    throw new AppError("Request body is required", StatusCodes.BAD_REQUEST);
+  }
+
   const { name, email, password, role = "contributor" } = body;
 
   if (!name || !email || !password) {
@@ -38,6 +42,10 @@ export const signup = async (body: SignupBody): Promise<UserPublic> => {
 };
 
 export const login = async (body: LoginBody): Promise<{ token: string; user: UserPublic }> => {
+  if (!body) {
+    throw new AppError("Request body is required", StatusCodes.BAD_REQUEST);
+  }
+
   const { email, password } = body;
 
   if (!email || !password) {
